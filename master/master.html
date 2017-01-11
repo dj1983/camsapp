@@ -1,0 +1,123 @@
+﻿<div class="master-container" ng-hide="vm.errordata == true">
+    <h3 class="headingrotis" style="margin-bottom:30px;">Skills Page</h3>
+    <div class="row" acn-loader="vm.isLoading" style="padding-top:10px;">
+        <div class="modal fade" id="editSkill{{vm.modalSkillType}}" role="dialog">
+            <div id="modal{{vm.modalSkillType}}" class="modal-dialog" style="width:40%" ng-hide="vm.isLoading">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <span class="form-label" style="color:#3465b0; font-size: 20px;">Edit {{vm.modalSkillType}} Skills of {{vm.selectedCap.SkillName}}</span>
+                    </div>
+                    <div class="modal-body">
+                        <form class="" style="max-width: 93%; margin-left: 3%;">
+                            <div name="modalCap" style="margin:5px;">
+                                <div class="input-group">
+                                    <span class="input-group-addon form-label" style="width:94px;font-size: 17px;">Capability</span>
+                                    <input id="inputa" type="text" class="form-control" ng-model="vm.capabilityInput" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ng-change="vm.searchCapability(vm.capabilityInput)"  placeholder="Search">
+                                    <div id="capInputGroupBtn" >
+                                        <button type="button" class="btn btn-default dropdown-toggle" ng-click="vm.getCapabilityDropdown()" data-toggle="dropdown"  style="height:34px;"><span class="fa fa-sort-desc"></span></button>
+                                        <ul id="capabilityDropdown" class="dropdown-menu dropdown-menu-right" role="menu" ng-hide="vm.capabilityDropdown==null || vm.capabilityDropdown.length==0" style="overflow-y:auto; max-height:262px; max-width: 362px;">
+                                            <li ng-repeat="item in vm.capabilityDropdown" ng-model="vm.modalSelectedCap" ng-click="vm.selectCapDropdown(item)" class="dropdown-toggle"><a href="#">{{item.CapabilityName}}</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div name="modalSpe" style="margin:5px;">
+                                <div class="input-group">
+                                    <span class="input-group-addon form-label" style="width:94px;font-size: 17px;">Speciality</span>
+                                    <input type="text" class="form-control" ng-model="vm.specialityInput" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ng-change="vm.searchSpeciality(vm.specialityInput)" placeholder="Search">
+                                    <div id="speInputGroupBtn" >
+                                        <button type="button" class="btn btn-default dropdown-toggle" ng-click="vm.getSpecialityDropdown(vm.modalSelectedCap)" data-toggle="dropdown" style="height:34px;"><span class="fa fa-sort-desc"></span></button>
+                                        <ul id="specialityDropdown" class="dropdown-menu dropdown-menu-right" role="menu" ng-hide="vm.specialityDropdown==null || vm.specialityDropdown.length==0" style="overflow-y:auto; max-height:262px; max-width: 362px;">
+                                            <li ng-repeat="item in vm.specialityDropdown" ng-model="vm.modalSelectedSpe" ng-click="vm.selectSpeDropdown(item)"><a href="#">{{item.SpecialtyName}}</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div name="modalSkill" style="margin:5px;">
+                                <div class="input-group">
+                                    <span class="input-group-addon form-label" style="width:94px;font-size: 17px;">Skill</span>
+                                    <input type="text" class="form-control" ng-model="vm.skillInput" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ng-change="vm.searchSkill(vm.skillInput)" placeholder="Search">
+                                    <div id="skillInputGroupBtn" >
+                                        <button type="button" class="btn btn-default dropdown-toggle" ng-click="vm.getSkillDropdown(vm.modalSelectedSpe)" data-toggle="dropdown" style="height:34px;"><span class="fa fa-sort-desc"></span></button>
+                                        <ul id="skillDropdown" class="dropdown-menu dropdown-menu-right" role="menu" ng-hide="vm.skillDropdown==null || vm.skillDropdown.length==0" style="overflow-y:auto; max-height:262px; max-width:362px;">
+                                            <li ng-repeat="item in vm.skillDropdown" ng-model="vm.modalSelectedSkill" ng-click="vm.selectSkillDropdown(item)"><a href="#">{{item.SkillName}}</a></li>
+                                        </ul>                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div name="modalTier" class="row acc-row" style="display:flex; margin-bottom: 10px;">
+                                <span class="form-label" for="selectedTier" style="width:85px; font-size: 17px; text-align: center; margin-top: 5px;">Tier</span>
+                                <select id="selectedTier" class="select form-select" style="margin-left:5px;" ng-model="vm.selectedTier" ng-options="item.TierName for item in vm.tierDropdown" ng-disabled="!vm.modalSelectedSkill"><option value=""></option></select> 
+                                <button type="button" class="btn btn-default" style="margin-left: 13%; border-radius:3px;" ng-click="vm.getSkillStatus(vm.modalSelectedSkill)" ng-disabled="vm.modalSelectedSkill==null">Add</button>                                                                                               
+                            </div>
+                        </form>
+                        <div class="panel panel-primary" style="border-radius:4px; margin-top:auto; margin-bottom:0px; ">
+                            <div class="panel-heading">
+                                <span>{{vm.modalSkillType}} Skills</span>                                
+                            </div>
+                            <div class="panel-body" style="position:relative; overflow-y:auto; width:auto; max-height:300px;" ng-mouseleave="vm.hideTooltip()">
+                                <ul class="list-group" style="border-radius:5px;" ng-mouseleave="vm.hideTooltip()">
+                                    <li class="list-group-item" ng-repeat="item in vm.allSkills" ng-mouseleave="vm.hideTooltip()" style="list-style-type:none;">                                        
+                                        <span class="glyphicon glyphicon-chevron-down" ng-click="vm.getTooltipInfo(item)" style="color:#004d90;"></span>
+                                        <button class="btn btn-xs pull-right" ng-click="vm.deleteSkill(item,$index)" style="background-color:transparent;"><span class="glyphicon glyphicon-trash"></span></button>
+                                        <!--<span data-toggle="tooltip" data-placement="bottom" style="text-overflow:ellipsis;" ng-mouseover="vm.getTooltipInfo(item)" title="{{vm.tooltipInfo.CapabilityName}}/{{vm.tooltipInfo.SpecialtyName}}/{{item.SkillName}} Tier: {{item.SkillTier}}">{{item.SkillName}}</span>-->
+                                        <span data-toggle="tooltip" data-target="#tooltip{{item.SkillID}}" ng-click="vm.getTooltipInfo(item)" style="text-overflow:ellipsis;">{{item.SkillName}}</span>
+                                        <div id="tooltip{{item.SkillID}}" role="tooltip" class="tooltip fade auto bottom in" style="display:none;">
+                                            <div class="tooltip-arrow" style="left:10%;"></div>
+                                            <div class="tooltip-inner" style="max-width: 380px; text-align:left;">
+                                                {{vm.tooltipInfo.CapabilityName}} >> {{vm.tooltipInfo.SpecialtyName}} >> {{item.SkillName}}
+                                                <br/>Tier: {{item.DisplaySkillTier}}
+                                            </div>
+                                        </div>                                        
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div ng-show="skillcount==0">
+                            <span>No {{skilltype}} Skill.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row acc-row-card" style="position:relative;margin-left:auto;">
+            <div class="form-group acc-listyle">
+                <label class="control-label form-label acc-lable" style="color:#18346D">Capability</label>
+                <select id="selectid" name="selectedCap" class="select form-select acc-listyles selector" ng-model="vm.selectedCap" ng-options="option.SkillName for option in vm.capability" required ng-change="vm.getMSGroup(vm.selectedCap.SkillID,false)"></select>
+            </div>
+        </div>
+        <div class="row acc-row-card">            
+            <collapsedcard skilltype="Core" shortfor="C" skills=vm.titleCore cap=vm.capability rolename=vm.selectedCap.SkillName currentskills=vm.currentCore currentpage=vm.corePage itemperpage=vm.itemPerPage skillcount=vm.coreSkillCount totalpage="vm.coreTotalPage"></collapsedcard>
+            <a style="position:relative;top:155px;left:-13%;font-style:italic;" href="#" title="Edit all Core Skills" ng-click="vm.editSkillType('Core')" ng-hide="vm.selectedCap == null" data-toggle="modal" data-target="#editSkill{{vm.modalSkillType}}" data-backdrop="true">Edit</a>
+        </div>
+        <div class="row acc-row-card">
+            <div class="form-group acc-listyle">
+                <label class="control-label  form-label acc-lable" style="color:#18346D">Role Specialization</label>
+                <select id="selectsg" name="selectedSG" class="select form-select acc-listyles " ng-click="vm.getTierDropdown()" ng-disabled="!vm.selectedCap" ng-model="vm.selectedRS"
+                        ng-options="option.MultiSkillGroupName for option in vm.msgroup" required ng-change="vm.viewMEskill(vm.selectedCap.SkillID,vm.selectedRS.MSGroupMasterID)">
+                    <option value="">Please select...</option>
+                </select>
+            </div>
+        </div>
+        <div class="row acc-row-card">
+            <collapsedcard skilltype="Mandatory" shortfor="M" skills=vm.titlemandatory rolename=vm.selectedRS.MultiSkillGroupName currentskills=vm.currentmandatory currentpage=vm.mandatoryPage itemperpage=vm.itemPerPage skillcount=vm.mandatorySkillCount totalpage="vm.mandatoryTotalPage"></collapsedcard>
+            <a style="position:absolute;bottom:36px;left:37%;font-style:italic;" href="#" title="Edit all Mandatory Skills" ng-click="vm.editSkillType('Mandatory')" ng-hide="vm.selectedRS == null" data-toggle="modal" data-target="#editSkill{{vm.modalSkillType}}" data-backdrop="true">Edit</a>
+            <collapsedcard skilltype="Elective" shortfor="E" skills=vm.titleelective rolename=vm.selectedRS.MultiSkillGroupName currentskills=vm.currentelective currentpage=vm.electivePage itemperpage=vm.itemPerPage skillcount=vm.electiveSkillCount totalpage=vm.electiveTotalPage></collapsedcard>
+            <a style="position:absolute;bottom:36px;right:11%;font-style:italic;" href="#" title="Edit all Elective Skills" ng-click="vm.editSkillType('Elective')" ng-hide="vm.selectedRS == null" data-toggle="modal" data-target="#editSkill{{vm.modalSkillType}}" data-backdrop="true">Edit</a>
+        </div>
+    </div>
+</div>
+<div class="master-container" ng-show="vm.errordata">
+    <div id="mymodal" class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%" ng-show="!vm.modalLoading && vm.errordata">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Skill</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.errormsg}}</p>
+            </div>
+        </div>
+    </div>
+</div>

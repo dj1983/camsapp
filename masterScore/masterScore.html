@@ -1,0 +1,179 @@
+﻿<div class="master-container" ng-hide="vm.errordata==true">
+    <h3 class="headingrotis" style="margin-bottom: 30px;">Score & Proficiency </h3>
+    <div class="row" acn-loader="vm.isLoading" style="padding-top:10px;">
+        <div class="row acc-row-card ">
+            <div class="form-group acc-listyle ">
+                <label class="control-label form-label acc-lable " style="color:#18346D">Capability</label>
+                <select name="selectedCap" class="select form-select acc-listyles" ng-model="vm.selectedCap" ng-options="option.SkillName for option in vm.capability" required ng-change="vm.getMSGroup(vm.selectedCap.SkillID)">
+                </select>
+            </div>
+            <div class="form-group acc-listyle ">
+                <label class="control-label  form-label acc-lable" style="color:#18346D">Role Specialization</label>
+                <select name="selectedSG" class="select form-select acc-listyles" ng-disabled="!vm.selectedCap" ng-model="vm.selectedSG"
+                        ng-options="option.MultiSkillGroupName for option in vm.msgroup" required ng-change="vm.getTotalSetting(vm.selectedCap.SkillID,vm.selectedSG.MSGroupMasterID)">
+                    <option value="">Please select...</option>
+                </select>
+            </div>
+        </div>
+        <div class="row acc-row-card ">
+            <div class="form-group acc-listyle ">
+                <div class="div-inline">
+                    <label class="control-label  form-label acc-lable .acc-listyles" style="margin-top:6.1% ;color:#18346D">Employee Enterprise ID</label>
+                    <input name="ID" type="text" required ng-focus class="form-control form-input acc-listyles" style="padding:0px 0px 0px 6px !important;width:250px !important" maxlength="50" placeholder="" ng-model="vm.userID" typeahead="name for name in vm.searchResourcePCC($viewValue)"
+                           typeahead-loading="loadingUsersPCC" typeahead-on-select="vm.selectNamePCC()" typeahead-wait-ms="500" />
+                    <i style="position:absolute;left:235px;top:10px;" ng-show="loadingUsersPCC" class="fa fa-spinner fa-spin pull-right"></i>
+                </div>
+            </div>
+
+            <button class="btn-group" style="margin-top: 3%;margin-left: 5%;"  data-target="#Modal" ng-click="vm.getSearchDate(vm.selectedCap.SkillID,vm.selectedSG.MSGroupMasterID,vm.userID)">Search</button>
+        </div>
+        <div class="row acc-row-card ">
+            <div class="form-group  ">
+                
+                <div class="col-sm-2" style="margin-left:20%">
+                    <button class="btn-link " ng-show="vm.TotalCount>0" ng-click="vm.clean()">Clear</button>
+                </div>
+                <div class="col-sm-2" style="margin-left:10%">
+                    <button class="btn-link " ng-show="vm.TotalCount>0" ng-click="vm.download()">Download</button>
+                </div>
+            </div>
+        </div>
+        <div class="row acc-row-card">
+            <table class="table table-bordered table-condensed table-hover acc-tbody " ng-show="vm.TotalCount>0" style="width:91%;" >
+                <tr class="">
+                    <th class="acc-th" ng-hide="">Enterprise id</th>
+                    <th class="acc-th" ng-hide="">Role Specialization</th>
+                    <th class="acc-th" ng-hide="">Proficiency</th>
+                    <th class="acc-th" ng-hide="">Total Score</th>
+                    <th class="acc-th" ng-hide="">Individual Skills’ Score</th>
+                </tr>
+                <tr class="active" ng-repeat="i in vm.data">
+                    <td class="acc-td" style="width:25%" ng-hide=""><small>{{i.EnterpriseID}}</small></td>
+                    <td class="acc-td" style="width:25%" ng-hide=""><small>{{i.MultiSkillRoleName}}</small></td>
+                    <td class="acc-td" style="width:10%" ng-hide=""><small>{{i.Proficency}}</small></td>
+                    <td class="acc-td" style="width:10%" ng-hide=""><small>{{i.TotalScore}}</small></td>
+                    <td class="acc-td" style="width:25%">
+                        <small>
+                            <a href="#">                                                           
+                                <span data-toggle="modal" data-target="#ProficiencyModal" ng-click="vm.getPeopleMSSkillData(i.PeopleKey,i.MultiSkillRoleID)">See individual skills’ score</span>
+                            </a>
+                        </small>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row acc-row-card" ng-show="vm.TotalCount>0">
+            <div class="acc-pageinfos">{{vm.Page}}  / {{vm.TotalPage}}</div>
+        </div>
+        <div class="row acc-row-card"  ng-show="vm.TotalCount>0">
+            <div class="acc-pagerinfos">
+                <pagination  ng-model="vm.Page"
+                            total-items="vm.TotalCount"
+                            max-size="0"
+                            previous-text="<<"
+                            next-text=">>"
+                            boundary-links="false"
+                            items-per-page="vm.itemPerPage">
+                </pagination>
+            </div>
+        </div>
+        <div class="modal fade" id="ProficiencyModal" role="dialog" module-loader="vm.modalLoading">
+            <div id="mymodal" class="modal-dialog acc-mymodal">
+                <div class="modal-content" ng-show="vm.modalLoading == false && vm.errordatas== false">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" style="color:#65689B">Individual Skills’ Score</h4> 
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 acc-relative">Employee Enterprise ID : {{vm.skilldata.EID}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 acc-relative">Career Level : {{vm.skilldata.CareerLevel}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 acc-relative">{{vm.skilldata.TypeName}}>>{{vm.skilldata.CategoryName}}>>{{vm.skilldata.CapabilityName}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 acc-relative">{{vm.skilldata.MultiSkillRoleName}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 acc-relative">Proficiency : {{vm.skilldata.Proficiency}}</div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 acc-relative" ng-hide="vm.skilltotalscore==''">Total Technical Score : {{vm.skilltotalscore}}</div>
+                        </div>
+                        <div class="row" ng-show="vm.SkillTotalCount>0">
+                            <table class="table table-bordered table-condensed table-hover acc-tbody " style="width:85%;">
+                                <tr class="">
+                                    <th class="acc-th">Skill&nbsp;&nbsp;Name</th>
+                                    <th class="acc-th">Score</th>
+                                </tr>
+                                <tr class="active" ng-repeat="skill in vm.skillXlist">
+                                    <td style="width:85%"><small>{{skill.SkillName}}</small></td>
+                                    <td class="acc-td" style="width:15%"><small>{{skill.SkillScore}}</small></td>
+                                </tr>
+                            </table>
+                            <div ng-show="skillcount==0">
+                                <span>No {{Core}} Skill.</span>
+                            </div>
+                        </div>
+                        <div class="row" ng-show="vm.SkillTotalCount>0">
+                            <div class="acc-pageinfo">{{vm.skillPage}}  / {{vm.skillTotalPage}}</div>
+                        </div>
+                        <div class="row" ng-show="vm.SkillTotalCount>0">
+                            <div class="acc-pagerinfo">
+                                <pagination ng-click="vm.getCurrentpeopleSkill()" ng-model="vm.skillPage"
+                                            total-items="vm.SkillTotalCount"
+                                            max-size="0"
+                                            previous-text="<<"
+                                            next-text=">>"
+                                            boundary-links="false"
+                                            items-per-page="vm.ScroePage">
+                                </pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-content acc-mpdal" ng-show="vm.modalLoading == false && vm.errordatas== true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" style="color:#65689B">Proficiency & Technical Score</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="acc-msg">{{vm.errormsg}}</p>
+                        <!--<button data-bb-handler="ok" type="button" class="btn btn-primary">OK</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+<div class="modal fade" id="Modal" role="dialog">
+    <div class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%;">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Score & Proficiency</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.msg}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="master-container" ng-show="vm.TotalCount==0">
+    <div id="mymodal" class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%" ng-show="vm.modalLoading == false && vm.errordata == true">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Score & Proficiency</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.errormsg}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

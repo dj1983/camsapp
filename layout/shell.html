@@ -1,0 +1,50 @@
+﻿
+<div class="">
+    <div ng-controller="ShellController as vm" class="maincontainer">
+        <div id="header">
+            <div class="banner">Multi Skill CAMS</div>
+            <div class="welcome">
+                <div style="float:right"><img style="border-radius:50%; width: 40px; height: 40px;" image-route-handler data-ref="{{vm.enterpriseID}}" bootstrap-tooltip="{{vm.enterpriseID}}" data-placement="bottom"></div>
+                <div style="float:right; padding-top:5px;padding-right:5px;"><p>Welcome, {{vm.firstName}} {{vm.lastName}}</p></div>
+            </div>
+        </div>
+        <nav class="light-navbar">
+            <div class="menu-fluid">
+                <ul class="nav navbar-nav navbar-left" ng-show="vm.getErrorState()">
+                    <li ng-class="{active: vm.isActive('/myMultiSkillGroup') || vm.isActive('/')}" class="acc-navbar-li"><a class="acc-navbar-a" href="/myMultiSkillGroup">Home</a></li>
+                    <li ng-show="vm.Admin" class="dropdown acc-navbar-li" ng-class="{active: vm.isActive('/proficiencyconfig') || vm.isActive('/process')||vm.isActive('/master')||vm.isActive('/masterScore') ||vm.isActive('/roleSpecialization') }">
+                        <a id="dLabel" data-toggle="dropdown" class="dropdown-toggle acc-navbar-a" href="#" data-target="#">Admin</a>
+                        <ul class="dropdown-menu" style="margin-left:-3px;border-radius: 0 6px 6px 6px;" role="menu" aria-labelledby="dropdownMenu">
+                            <li ng-show="vm.Process"><a href="/process">Process</a></li>
+                            <li ng-show="vm.Config"><a href="/proficiencyconfig#total">Proficiency Configuration</a></li>
+                            <li ng-show="vm.RoleSpecialization"><a href="/roleSpecialization">Role Specialization</a></li>
+                            <li ng-show="vm.Master" class="dropdown-submenu">
+                                <a href="javascript:;">View Master</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/master">Skills</a></li>
+                                    <li><a href="/masterScore">Score & Proficiency </a></li>
+                                    <!--<li class="dropdown-submenu">
+                                    <a href="javascript:;">Master</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:;">Master</a></li>
+                                    </ul>
+                                   </li>-->
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <section id="content" class="">
+            <div ui-view class="shuffle-animation"></div>
+        </section>
+
+    </div>
+    <div class="copyright">
+        <p>&#169;2016, Accenture. All Rights Reserved. For internal use only.</p>
+    </div>
+
+</div>
+
+

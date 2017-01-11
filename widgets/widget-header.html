@@ -1,0 +1,15 @@
+<div class="widget-head">
+    <div class="div-inline">
+        <!--<div class="page-title pull-left">{{title}}</div>-->
+        <div ng-show="{{showprof}}">
+            <h3 class="number">{{proficiency}}</h3>
+            <h6 class="name">{{profdesc}}</h6>
+        </div>
+        <div>
+            <p>{{title}}</p>
+        </div>
+        
+    </div>
+    <div class="widget-icons pull-right" data-ng-if="allowCollapse"><a ht-widget-minimize></a></div>
+    <div class="widget-icons pull-right" ng-show="showmore"><i class="glyphicon glyphicon-plus-sign pull-right" data-toggle="modal" data-target="#addMore"></i></div>
+</div>

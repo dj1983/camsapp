@@ -1,0 +1,943 @@
+﻿<div class="config-container" ng-hide="vm.errordata==true">
+    <div class="row acc-row">
+        <h3 class="headingrotis" style="margin-bottom: 30px;">Proficiency Calculation Configuration</h3>
+        <a href="#" style="float:right">
+            <span data-toggle="modal" data-target="#ProficiencyModal">Help & Support</span>
+        </a>
+    </div>
+    <div class="row acc-row" acn-loader="vm.isLoading" style="padding-top:10px; background:#e5e5e5">
+        <div class="row " style="padding-left:2.7%;">
+            <!-- required for floating -->
+            <!-- Nav tabs -->
+            <div class="form-group acc-listyle">
+                <label class="control-label form-label acc-lable " style="color:black !important">Capability</label>
+                <select name="selectedCap" style="margin-top: 6.4% !important;" class="select form-select acc-listyles" ng-model="vm.selectedCap" ng-options="option.SkillName for option in vm.capability" required ng-change="vm.getMSGroup(vm.selectedCap.SkillID)">
+                    <option value="">Please select...</option>
+                </select>
+            </div>
+            <div class="form-group acc-listyle">
+                <label style="margin-top: 26.5px !important;color:black !important" class="control-label   form-label acc-lable">Role Specialization</label>
+                <select name="selectedSG" style="margin-top: 6.0% !important;" class="select form-select acc-listyles" ng-disabled="!vm.selectedCap" ng-model="vm.selectedSG"
+                        ng-options="option.MultiSkillGroupName for option in vm.msgroup" required ng-change="vm.getTotalSetting(vm.level.LevelID,vm.selectedSG.SGCapMsID)">
+                    <option value="">Please select...</option>
+                </select>
+            </div>
+        </div>
+        <div class="row acc-row ">
+            <div class="col-xs-10">
+                <div id="tab_content" class="tab-content ">
+                    <div class="tab-pane acc-cansent" style="left:5% !important" id="total">
+                        <div style="border-bottom: 1px solid #e5e5e5;">
+                            <!--To set the minimum Percentage for Proficiency -->
+                            <div>
+                                <div style="margin-bottom:20px"><span style="color: #286090 !important;font-weight: bold !important;">To set the minimum Percentage for Proficiency</span></div>
+                                <div>
+                                    <form name="TotalForm" id="TotalForm" class="form-horizontal acc-cansent" role="form" novalidate autocomplete="off">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P1</label>
+                                            <div class="col-sm-2">
+                                                <input name="P1" class="form-control form-input" style="width:250px !important;" type="text" maxlength="6" placeholder="" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.totalSettingP1" ng-keypress="vm.checkNum($event)"
+                                                       required ng-focus ng-pattern="/^(((([1-9]\d)|(\d))((\.)|(\.\d[0-9])|(\.[0-9])?)?)|100|(100((\.)|(\.[0])|(\.[0]{2}))))$/" ng-model-options="{ allowInvalid : true}" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="TotalForm.P1.$dirty && TotalForm.P1.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Score of P1 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!TotalForm.P1.$error.required && (TotalForm.P1.$error.pattern || !TotalForm.P1.$valid) ">
+                                                            <small class="error error-message">
+                                                                Invalid score. (Score must be between 0 and 100. Allow 2 decimal places.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP1,0) && TotalForm.P1.$dirty && vm.selectedSG && !TotalForm.P1.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P1 must be greater than score of P0.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP2,vm.totalSettingP1) && TotalForm.P1.$dirty && vm.selectedSG && !TotalForm.P1.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P1 must be less than score of P2.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P2</label>
+                                            <div class="col-sm-2">
+                                                <input name="P2" class="form-control form-input" style="width:250px !important;" type="text" maxlength="6" placeholder="" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.totalSettingP2" ng-keypress="vm.checkNum($event)"
+                                                       required ng-focus ng-pattern="/^(((([1-9]\d)|(\d))((\.)|(\.\d[0-9])|(\.[0-9])?)?)|100|(100((\.)|(\.[0])|(\.[0]{2}))))$/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="TotalForm.P2.$dirty && TotalForm.P2.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Score of P2 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!TotalForm.P2.$error.required && (TotalForm.P2.$error.pattern || !TotalForm.P2.$valid)">
+                                                            <small class="error error-message">
+                                                                Invalid score. (Score must be between 0 and 100. Allow 2 decimal places.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP2,vm.totalSettingP1) && TotalForm.P2.$dirty && vm.selectedSG && !TotalForm.P2.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P2 must be greater than score of P1.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP3,vm.totalSettingP2) && TotalForm.P2.$dirty && vm.selectedSG && !TotalForm.P2.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P2 must be less than score of P3.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P3</label>
+                                            <div class="col-sm-2">
+                                                <input name="P3" class="form-control form-input" style="width:250px !important;" maxlength="6" type="text" placeholder="" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.totalSettingP3" ng-keypress="vm.checkNum($event)"
+                                                       required ng-focus ng-pattern="/^(((([1-9]\d)|(\d))((\.)|(\.\d[0-9])|(\.[0-9])?)?)|100|(100((\.)|(\.[0])|(\.[0]{2}))))$/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="TotalForm.P3.$dirty && TotalForm.P3.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Score of P3 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!TotalForm.P3.$error.required && (TotalForm.P3.$error.pattern || !TotalForm.P3.$valid)">
+                                                            <small class="error error-message">
+                                                                Invalid score. (Score must be between 0 and 100. Allow 2 decimal places.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP3,vm.totalSettingP2) && TotalForm.P3.$dirty && vm.selectedSG && !TotalForm.P3.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P3 must be greater than score of P2.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP4,vm.totalSettingP3) && TotalForm.P3.$dirty && vm.selectedSG && !TotalForm.P3.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P3 must be less than score of P4.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P4</label>
+                                            <div class="col-sm-2">
+                                                <input name="P4" class="form-control form-input" style="width:250px !important;" maxlength="6" type="text" placeholder="" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.totalSettingP4" ng-keypress="vm.checkNum($event)"
+                                                       required ng-focus ng-pattern="/^(((([1-9]\d)|(\d))((\.)|(\.\d[0-9])|(\.[0-9])?)?)|100|(100((\.)|(\.[0])|(\.[0]{2}))))$/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="TotalForm.P4.$dirty && TotalForm.P4.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Score of P4 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!TotalForm.P4.$error.required && (TotalForm.P4.$error.pattern || !TotalForm.P4.$valid)">
+                                                            <small class="error error-message">
+                                                                Invalid score. (Score must be between 0 and 100. Allow 2 decimal places.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.totalSettingP4,vm.totalSettingP3) && TotalForm.P4.$dirty && vm.selectedSG && !TotalForm.P4.$error.required">
+                                                            <small class="error error-message">
+                                                                Score of P4 must be greater than score of P3.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!--To set the Minimum Experience for proficinecy-->
+                            <div>
+                                <div style="margin-bottom:20px"><span style="color: #286090 !important;font-weight: bold !important;">To set the Minimum Experience for proficinecy</span></div>
+                                <div>
+                                    <form name="proficinecyForm" id="proficinecyForm" class="form-horizontal acc-cansent" role="form" novalidate autocomplete="off">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P1</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpP1" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingP1" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">Months</label>
+                                            <div class=" col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="proficinecyForm.ExpP1.$dirty && proficinecyForm.ExpP1.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Month of P1 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!proficinecyForm.ExpP1.$error.required && proficinecyForm.ExpP1.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid month. (Month value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP1,0) && !proficinecyForm.ExpP1.$error.required && vm.selectedSG && proficinecyForm.ExpP1.$dirty">
+                                                            <small class="error error-message">
+                                                                Month of P1 must be greater than month of P0.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP2,vm.expSettingP1)  && !proficinecyForm.ExpP1.$error.required && vm.selectedSG  && proficinecyForm.ExpP1.$dirty">
+                                                            <small class="error error-message">
+                                                                Month of P1 must be less than month of P2.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P2</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpP2" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingP2" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">Months</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="proficinecyForm.ExpP2.$dirty && proficinecyForm.ExpP2.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Month of P2 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!proficinecyForm.ExpP2.$error.required && proficinecyForm.ExpP2.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid month. (Month value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP2,vm.expSettingP1) && !proficinecyForm.ExpP2.$error.required && vm.selectedSG && proficinecyForm.ExpP2.$dirty">
+                                                            <small class="error error-message">
+                                                                Month of P2 must be greater than month of P1.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP3,vm.expSettingP2) && !proficinecyForm.ExpP2.$error.required && vm.selectedSG && proficinecyForm.ExpP2.$dirty">
+                                                            <small class="error error-message">
+                                                                Month of P2 must be less than month of P3.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P3</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpP3" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingP3" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">Months</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="proficinecyForm.ExpP3.$dirty && proficinecyForm.ExpP3.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Month of P3 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!proficinecyForm.ExpP3.$error.required && proficinecyForm.ExpP3.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid month. (Month value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP3,vm.expSettingP2) && proficinecyForm.ExpP3.$dirty && !proficinecyForm.ExpP3.$error.required && vm.selectedSG">
+                                                            <small class="error error-message">
+                                                                Month of P3 must be greater than month of P2.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP4,vm.expSettingP3) && proficinecyForm.ExpP3.$dirty && !proficinecyForm.ExpP3.$error.required && vm.selectedSG">
+                                                            <small class="error error-message">
+                                                                Month of P3 must be less than month of P4.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">P4</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpP4" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingP4" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">Months</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="proficinecyForm.ExpP4.$dirty && proficinecyForm.ExpP4.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Month of P4 is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!proficinecyForm.ExpP4.$error.required && proficinecyForm.ExpP4.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid month. (Month value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="vm.compare(vm.expSettingP4,vm.expSettingP3) && proficinecyForm.ExpP4.$dirty && !proficinecyForm.ExpP4.$error.required && vm.selectedSG">
+                                                            <small class="error error-message">
+                                                                Month of P4 must be greater than month of P3.
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </form>
+                                </div>
+                            </div>
+                            <!--To set primary/Secondary Skill experience weightage-->
+                            <div>
+                                <div style="margin-bottom:20px"><span style="color: #286090 !important;font-weight: bold !important;">To set primary/Secondary Skill experience weightage</span></div>
+                                <div>
+                                    <form name="ExperienceForm" id="ExperienceForm" class="form-horizontal acc-cansent" role="form" novalidate autocomplete="off">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">Primary Skill</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpPri" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingPri" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="ExperienceForm.ExpPri.$dirty && ExperienceForm.ExpPri.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Weightage of primary skill is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!ExperienceForm.ExpPri.$error.required && ExperienceForm.ExpPri.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid weightage. (Weightage value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-3 form-label">Secondary Skill</label>
+                                            <div class="col-sm-2">
+                                                <input name="ExpSec" type="text" class="form-control form-input" maxlength="3" placeholder="" style="width:250px !important" ng-disabled="!vm.selectedSG || !vm.selectedCap" ng-model="vm.expSettingSec" ng-keypress="vm.checkExp($event)"
+                                                       required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model-options="{ allowInvalid : true }" />
+                                            </div>
+                                            <label class="control-label col-sm-1 form-label" style="width:120px !important;text-align:right">%</label>
+                                            <div class="col-sm-5 pull-right">
+                                                <div class="error">
+                                                    <ul class="error">
+                                                        <li ng-show="ExperienceForm.ExpSec.$dirty && ExperienceForm.ExpSec.$error.required && vm.selectedSG && vm.selectedCap">
+                                                            <small class="error error-message">
+                                                                Weightage of secondary skill is required.
+                                                            </small>
+                                                        </li>
+                                                        <li ng-show="!ExperienceForm.ExpSec.$error.required && ExperienceForm.ExpSec.$error.pattern">
+                                                            <small class="error error-message">
+                                                                Invalid weightage. (Weightage value must be between 0 and 100.)
+                                                            </small>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </form>
+                                </div>
+                            </div>
+                            <!--To set  Technical/Contribution/Certification weightage-->
+                            <div >
+                                <div style="margin-bottom:20px"><span style="color: #286090 !important;font-weight: bold !important;">To set Technical/Contribution/Certification weightage</span></div>
+                                <div style="margin-left:12%">
+                                    <form id="TableForm" name="TableForm">
+                                        <table border="1" id="table">
+                                            <tr>
+                                                <td style="display:table-cell !important;color:#000 ;padding:0px 15px 10px 15px;font-weight: bold; text-align: center;">Career level</td>
+                                                <td style="display:table-cell !important;color:#000 ;padding:0px 15px 10px 15px;font-weight: bold; text-align: center;">Technical Weightage</td>
+                                                <td style="display:table-cell !important;color:#000 ;padding:0px 15px 10px 15px;font-weight: bold; text-align: center;">Contributions Weightage</td>
+                                                <td style="display:table-cell !important;color:#000 ;padding:0px 15px 10px 15px;font-weight: bold; text-align: center;">Certification Weightage</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Leadership</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResultleader}" name="LeadershipTechnical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap "   ng-model="vm.LeadershipTechnical" style="text-align: center;" type="text" required ng-focus  ng-keypress="vm.checkExp($event)"  ng-pattern="/^(0)$|^100$|^[1-9][0-9]?$/" ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResultleader}" name="LeadershipContributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model="vm.LeadershipContributions" style="text-align: center;" type="text" required ng-focus  ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResultleader}" name="LeadershipCertification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-model="vm.LeadershipCertification" style="text-align: center;" type="text" required ng-focus   ng-keypress="vm.checkExp($event)" ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 5</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult5}" name="L5Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L5Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult5}" name="L5Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L5Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult5}" name="L5Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L5Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                           <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 6</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult6}" name="L6Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L6Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult6}" name="L6Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L6Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult6}" name="L6Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L6Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 7</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult7}" name="L7Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L7Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult7}" name="L7Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L7Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult7}" name="L7Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L7Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 8</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult8}" name="L8Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L8Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult8}" name="L8Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L8Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult8}" name="L8Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L8Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 9</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult9}" name="L9Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L9Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult9}" name="L9Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L9Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult9}" name="L9Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L9Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 10</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult10}" name="L10Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L10Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult10}" name="L10Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L10Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult10}" name="L10Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L10Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 11</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult11}" name="L11Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L11Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult11}" name="L11Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L11Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult11}" name="L11Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L11Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 12</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult12}" name="L12Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L12Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult12}"name="L12Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L12Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult12}" name="L12Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L12Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:1px;font-weight: bold; text-align: center;">Level 13</td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult13}" name="L13Technical" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L13Technical" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/"  ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult13}" name="L13Contributions" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L13Contributions" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"   ng-model-options="{ allowInvalid : true}" /></td>
+                                                <td style="text-align: center;"><input ng-class="{'acc-error-message':!vm.validationResult13}" name="L13Certification" maxlength="3" ng-disabled="!vm.selectedSG || !vm.selectedCap " ng-model="vm.L13Certification" style="text-align: center;" type="text" required ng-focus ng-pattern="/(^[0-9]$)|(^[1-9][0-9]$)|100/" ng-keypress="vm.checkExp($event)"  ng-model-options="{ allowInvalid : true}" /></td>
+                                            </tr>
+                                        </table>
+                                        <div class="error">
+                                            <!-- Leadership-->
+                                            <span class="col-sm-12" ng-show="TableForm.LeadershipTechnical.$dirty && TableForm.LeadershipTechnical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Leadership] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.LeadershipTechnical.$error.required && TableForm.LeadershipTechnical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Leadership] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.LeadershipContributions.$dirty && TableForm.LeadershipContributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Leadership] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.LeadershipContributions.$error.required && TableForm.LeadershipContributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Leadership] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.LeadershipCertification.$dirty && TableForm.LeadershipCertification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Leadership] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.LeadershipCertification.$error.required && TableForm.LeadershipCertification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Leadership] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L5-->
+                                            <span class="col-sm-12" ng-show="TableForm.L5Technical.$dirty && TableForm.L5Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 5] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L5Technical.$error.required && TableForm.L5Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 5] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L5Contributions.$dirty && TableForm.L5Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 5] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L5Contributions.$error.required && TableForm.L5Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 5] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L5Certification.$dirty && TableForm.L5Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 5] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L5Certification.$error.required && TableForm.L5Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 5] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L6-->
+                                            <span class="col-sm-12" ng-show="TableForm.L6Technical.$dirty && TableForm.L6Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 6] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L6Technical.$error.required && TableForm.L6Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 6] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L6Contributions.$dirty && TableForm.L6Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 6] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L6Contributions.$error.required && TableForm.L6Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 6] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L6Certification.$dirty && TableForm.L6Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 6] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L6Certification.$error.required && TableForm.L6Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 6] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L7-->
+                                            <span class="col-sm-12" ng-show="TableForm.L7Technical.$dirty && TableForm.L7Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 7] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L7Technical.$error.required && TableForm.L7Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 7] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L7Contributions.$dirty && TableForm.L7Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 7] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L7Contributions.$error.required && TableForm.L7Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 7] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L7Certification.$dirty && TableForm.L7Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 7] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L7Certification.$error.required && TableForm.L7Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 7] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L8-->
+                                            <span class="col-sm-12" ng-show="TableForm.L8Technical.$dirty && TableForm.L8Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 8] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L8Technical.$error.required && TableForm.L8Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 8] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L8Contributions.$dirty && TableForm.L8Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 8] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L8Contributions.$error.required && TableForm.L8Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 8] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L8Certification.$dirty && TableForm.L8Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 8] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L8Certification.$error.required && TableForm.L8Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 8] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L9-->
+                                            <span class="col-sm-12" ng-show="TableForm.L9Technical.$dirty && TableForm.L9Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 9] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L9Technical.$error.required && TableForm.L9Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 9] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L9Contributions.$dirty && TableForm.L9Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 9] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L9Contributions.$error.required && TableForm.L9Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 9] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L9Certification.$dirty && TableForm.L9Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 9] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L9Certification.$error.required && TableForm.L9Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 9] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L10-->
+                                            <span class="col-sm-12" ng-show="TableForm.L10Technical.$dirty && TableForm.L10Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 10] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L10Technical.$error.required && TableForm.L10Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 10] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L10Contributions.$dirty && TableForm.L10Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 10] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L10Contributions.$error.required && TableForm.L10Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 10] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L10Certification.$dirty && TableForm.L10Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 10] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L10Certification.$error.required && TableForm.L10Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 10] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L11-->
+                                            <span class="col-sm-12" ng-show="TableForm.L11Technical.$dirty && TableForm.L11Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 11] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L11Technical.$error.required && TableForm.L11Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 11] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L11Contributions.$dirty && TableForm.L11Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 11] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L11Contributions.$error.required && TableForm.L11Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 11] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L11Certification.$dirty && TableForm.L11Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 11] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <!-- L12-->
+                                            <span class="col-sm-12" ng-show="TableForm.L12Technical.$dirty && TableForm.L12Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 12] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L12Technical.$error.required && TableForm.L12Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 12] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L12Contributions.$dirty && TableForm.L12Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 12] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L12Contributions.$error.required && TableForm.L12Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 12] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L12Certification.$dirty && TableForm.L12Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 12] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L12Certification.$error.required && TableForm.L12Certification.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 12] Certification Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <!-- L13-->
+                                            <span class="col-sm-12" ng-show="TableForm.L13Technical.$dirty && TableForm.L13Technical.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 13] Technical Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L13Technical.$error.required && TableForm.L13Technical.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 13] Technical Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L13Contributions.$dirty && TableForm.L13Contributions.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 13] Contribution Weightage is required.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!TableForm.L13Contributions.$error.required && TableForm.L13Contributions.$error.pattern">
+                                                <small class="error error-message">
+                                                    [Level 13] Contribution Weightage must be between 0 and 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="TableForm.L13Certification.$dirty && TableForm.L13Certification.$error.required ">
+                                                <small class="error error-message">
+                                                    [Level 13] Certification Weightage is required.
+                                                </small>
+                                            </span>
+                                            <!--validation Result 100-->
+                                            <span class="col-sm-12" ng-show="!vm.validationResultleader ">
+                                                <small class="error error-message">
+                                                    [Leadership] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult5 ">
+                                                <small class="error error-message">
+                                                    [Level 5] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult6 ">
+                                                <small class="error error-message">
+                                                    [Level 6] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult7 ">
+                                                <small class="error error-message">
+                                                    [Level 7] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult8 ">
+                                                <small class="error error-message">
+                                                    [Level 8] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span  class="col-sm-12" ng-show="!vm.validationResult9 ">
+                                                <small class="error error-message">
+                                                    [Level 9] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult10 ">
+                                                <small class="error error-message">
+                                                    [Level 10] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult11 ">
+                                                <small class="error error-message">
+                                                    [Level 11] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult12 ">
+                                                <small class="error error-message">
+                                                    [Level 12] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                            <span class="col-sm-12" ng-show="!vm.validationResult13 ">
+                                                <small class="error error-message">
+                                                    [Level 13] Sum of Technical, Contribution and Certification Weightage should be 100.
+                                                </small>
+                                            </span>
+                                        </div>
+                                    </form>
+                                    <div class="form-group" style="margin-top:30px; margin-left:200px">
+                                        <div class="col-sm-8">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="btn" style="color: #fff;background-color: #337ab7; " ng-disabled="!vm.validationResultleader||!vm.validationResult5||!vm.validationResult6||!vm.validationResult7||!vm.validationResult8||!vm.validationResult9||!vm.validationResult10||!vm.validationResult11||!vm.validationResult12||!vm.validationResult13||TableForm.$invalid||ExperienceForm.$invalid||proficinecyForm.$invalid||TotalForm.$invalid || !vm.compareResult || !vm.compareExpResult|| vm.isLoading " ng-click="vm.Save(vm.selectedSG.SGCapMsID)">Save</button>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="btn" style="color: #fff;background-color: #337ab7; " ng-click="vm.getTotalSetting(vm.level.LevelID,vm.selectedSG.SGCapMsID)">Reset</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ProficiencyModal" role="dialog">
+        <div id="mymodal" class="modal-dialog acc-mymodal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="color:#65689B">Help & Support</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="border-bottom: 1px solid #e5e5e5">
+                        <label style="margin: 10px 2px 5px 20px;">
+                            Tool tip message Total page:<br />
+                            <br />
+                            Please set the weightage configuration for total score and proficiency mapping. <br />
+                            The total score should be calculated  by employee Technical score<br />
+                            (from third party tool-Mettle ) ,Certification score (from CAMS) based on
+                            the Technical proficiency configuration weightage.<br />
+                            <br />
+                            <mark>Capability</mark>: Please select capability to set configuration.<br />
+                            <mark>Role Specialization</mark>: Please select Role Specialization to set configuration.<br />
+                            <mark>P1</mark>: Please input the value for Proficiency P1.  <br />
+                            <mark>P2</mark>: Please input the value for Proficiency P2.<br />
+                            <mark>P3</mark>: Please input the value for Proficiency P3.<br />
+                            <mark>P4</mark>: Please input the value for Proficiency P4.<br />
+                            <br />
+                            Example : <br />
+                            P1 value set to 6.25 <br />
+                            P2 value set to 12.5 <br />
+                            P3 value set to 25,<br />
+                            P4 value set to 50. <br />
+                            Proficiency would be P0 when 0<=score<6.25
+                                <br />
+                                Proficiency would be P1 when 6.25<=score<12.5
+                                    <br />
+                                    Proficiency would be P2 when 12.5<=score<25
+                                        <br />
+                                        Proficiency would be P3 when 25<=score<50
+                                            <br />
+                                            Proficiency would be P4 when 50<=score<br />
+                                            <br />
+                        </label>
+                    </div>
+                    <div class="row" style="border-bottom: 1px solid #e5e5e5">
+                        <label style="margin: 10px 2px 5px 20px;">
+                            Proficiency experience configuration<br />
+                            <br />
+                            Please set the range configuration for total experience and proficiency mapping .The total experience should be calculated by employee primary and secondary skills’ experience based on the respective weightage.<br />
+                            <br />
+                            <mark>Capability</mark>: Please select capability to set configuration.<br />
+                            <mark>Role Specialization</mark>: Please select Role Specialization to set configuration.<br />
+                            <mark>P1</mark>: Please input the value for Proficiency P1.<br />
+                            <mark>P2</mark>: Please input the value for Proficiency P2.<br />
+                            <mark>P3</mark>: Please input the value for Proficiency P3.<br />
+                            <mark>P4</mark>: Please input the value for Proficiency P4.<br />
+                            <mark>Weightage of Primary Skill</mark>: Please input weightage for Primary skill<br />
+                            <mark>Weightage of Secondary Skill</mark>: Please input weightage for Secondary skill<br />
+                            <br />
+                            Example :<br />
+                            P1 value set to 12
+                            P2 value set to 24
+                            P3 value set to 48
+                            P4 value set to 60
+                            Proficiency would be P0 when 0<=score<12
+                                <br />
+                                proficiency would be p1 when 12<=score<24
+                                    <br />
+                                    proficiency would be p2 when 24<=score<48
+                                        <br />
+                                        proficiency would be p3 when 48<=score<60
+                                            <br />
+                                            proficiency would be p4 when 60<=score<br />
+                                            <br />
+                                            weightage for Primary skill set to 100%<br />
+                                            weightage for Primary skill set to 50%<br />
+                                            Primary skill experience is 48 months and secondary skill experience is 60 then total experience  would be 48*100%+60*50%=78 months<br />
+                                            <br />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label style="margin: 10px 2px 5px 20px;">
+                            Technical Proficiency configuration<br />
+                            <br />
+                            Please set the sections weightage for  Technical, Contribution and Certification sections.  The sum of these sections weightage should be 100%.<br />
+                            <br />
+                            <mark>Capability</mark>: Please select capability to set weightage.<br />
+                            <mark>Role Specialization</mark>: Please select Role Specialization to set weightage.<br />
+                            <mark>Career level</mark>: Please select Career level to set weightage.<br />
+                            <mark>Technical Weightage</mark>: Please input the value for Technical Weightage.<br />
+                            <mark>Contribution Weightage</mark>: Please input the value for Contribution Weightage.<br />
+                            <mark>Certification Weightage</mark>: Please input the value for Certification Weightage.<br />
+                            <br />
+                            Example :<br />
+                            <mark>Technical Weightage</mark> value set to 80%<br />
+                            <mark>Contribution Weightage</mark> value set to 10%<br />
+                            <mark>Certification Weightage</mark> value set to 10%<br />
+                            <br />
+                            Technical score is 100 , Contribution score is 80  and certification score is 50 then the total score would be 100*80%+80*10%+50*10%= 93<br />
+                            <br />
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-content acc-mpdal" ng-show="vm.modalLoading == false && vm.errordata== true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" style="color:#65689B">Proficiency & Technical Score</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class=" acc-msg ">{{vm.errormsg}}</p>
+                        <!--<button data-bb-handler="ok" type="button" class="btn btn-primary">OK</button>-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="master-container" ng-hide="vm.errordata==false">
+    <!--<h3 class="headingrotis" style=" margin-bottom: 30px;">{{vm.errormsg}}</h3>-->
+    <div id="mymodal" class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%" ng-show="vm.errordata == true">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Proficiency Configuration</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.errormsg}}</p>
+            </div>
+        </div>
+    </div>
+</div>

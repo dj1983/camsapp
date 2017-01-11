@@ -1,0 +1,88 @@
+﻿<div class="master-container" ng-hide="vm.errordata==true">
+    <h3 class="headingrotis" style="margin-bottom:30px;">Role Specialization </h3>
+    <div class="row" acn-loader="vm.isLoading" style="padding-top:10px;">
+        <div class="row acc-row-card ">
+            <div class="form-group col-md-12 acc-listyle ">
+                <label class="control-label form-label  role-float role-lable " style="color:#18346D">Capability</label>
+                <select name="selectedCap" class="select form-select   role-listyles" style="margin-left: 15.4%;" ng-model="vm.selectedCap" ng-options="option.CapabilityName for option in vm.capability" required ng-change="vm.getMSGroup(vm.selectedCap.CapabilityId)"></select>
+            </div>
+        </div>
+        <div class="row acc-row-card ">
+            <div class="form-group col-md-12 acc-listyle ">
+                    <label class="control-label  form-label  role-float role-lable " style="color:#18346D">Role Specialization Name</label>
+                    <input name="ID" maxlength="256" type="text" required ng-focus class="form-control form-input  role-listyles" style="margin-left:3.1%;width:250px !important"  ng-model="vm.rolename"  />
+            </div>
+        </div>
+        <div class="row acc-row-card ">
+            <div class="form-group col-md-12 acc-listyle">
+                <div class="div-inline">
+                    <label class="control-label  form-label role-lable " style="color:#18346D">Role Specialization Definition </label>
+                    <textarea class="form-control form-input"   style="float:right;width:400px !important;" rows="2" ng-model="vm.comment" required></textarea>
+                </div>
+            </div>
+            <button class="btn-group" style="margin-left: 78%; margin-top: -78px; width: 80px;"   ng-click="vm.addData()">Add</button>
+        </div>
+        <div class="row acc-row-card">
+            <table class="table table-bordered table-condensed table-hover acc-tbody" ng-show="vm.msgroup.length>0" style="width:91%;">
+                <tr class="">
+                    <th class="acc-th" >Capability</th>
+                    <th class="acc-th" >Role Specialization</th>
+                    <th class="acc-th" >Action</th>
+                </tr>
+                <tr class="active" ng-repeat="i in vm.msgroup">
+                    <td class="acc-td" style="width:30%;word-break:break-all; word-wrap:break-word;" ><small>{{i.CapabilityName}}</small></td>
+                    <td class="acc-td" style="width:30%;word-break:break-all; word-wrap:break-word;"  ><small><a ng-click="vm.tomaster(i.CapabilityId,i.RoleSpeciallizationId,i.RoleSpeciallizationName,i.CapabilityName)">{{i.RoleSpeciallizationName}}</a></small></td>
+                    <td class="acc-td" style="width:40%" ><button class="btn-group" style="width:70px" data-toggle="modal" data-target="#ProficiencyModal" ng-click="vm.SetParameters(i)" >Edit</button>
+                        <button class="btn-group" style="margin-left: 15%;width:70px" ng-click="vm.deleteData(i.RoleSpeciallizationId,i.RoleMappingCount)">Delete</button></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="modal fade" id="ProficiencyModal">
+            <div id="mymodal" class="modal-dialog acc-mymodal">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title" style="color:#65689B">Role Specialization Rename</h3>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label>Role Specialization Name <i style="color:red">*</i></label>
+                                <div class="input-group date form_date">
+                                    <input type="text"  maxlength="256" style="width:250px" class="form-control" ng-model="vm.editrolename" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">Role Specialization Definition</label>
+                                <textarea class="form-control" rows="2" ng-model="vm.definition" required></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-group" style="width:80px" data-dismiss="modal" ng-click="vm.ClearParameters()">Cancel</button>
+                        <button type="button" class="btn-group" style="width:80px" data-dismiss="modal" ng-click="vm.renameData()" >
+                            Save 
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="master-container" ng-show="vm.errordata == true && vm.modalLoading == false">
+    <div id="mymodal" class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Role Specialization</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.errormsg}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

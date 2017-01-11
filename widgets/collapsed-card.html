@@ -1,0 +1,30 @@
+﻿<div class="col-md-4">
+    <div class="widget {{colorclass}} card">
+        <div ht-widget-header title="{{skilltype}} Skills" showmore="addmore"></div>
+        <div>
+            <div class="widget-content cardtext-info">
+                <div ng-repeat="skill in skills">
+
+                    <small>{{skill.name}}</small>
+                </div>
+                <div class="card-footer"><span class="fa fa-list-ul" style="float:right" title="Click here to view all {{skilltype}} Skills" data-toggle="modal" data-target="#myModal{{skilltype}}"></span></div>
+            </div>
+            <div class="modal fade" id="myModal{{skilltype}}" role="dialog">
+                <div id="modal{{skilltype}}" class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">{{rolename}}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p class="subheadingrotis">{{skilltype}} Skills</p>
+                            <div ng-repeat="skill in skills">
+                                <ul><li><small>{{skill.name}}</small></li></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

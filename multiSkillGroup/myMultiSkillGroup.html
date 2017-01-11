@@ -1,0 +1,143 @@
+﻿<script>
+    $(document).ready(function () {
+        //$("#card-content div").hide(); // Initially hide all content
+        $("#tabs li:first").attr("id", "current"); // Activate first tab
+        ////$("#card-content div:first").fadeIn(); // Show first tab content
+
+        $('#tabs a').click(function (e) {
+            e.preventDefault();
+            //$("#card-content div").hide(); //Hide all content
+            $("#tabs li").attr("id", ""); //Reset id's
+            $(this).parent().attr("id", "current"); // Activate this
+            $('#' + $(this).attr('title')).fadeIn(); // Show content for current tab
+        });
+    });
+</script>
+<div class="card-container">
+    <div ng-show="vm.showc">
+        <h3 class="headingrotis">My Role Specialization</h3>
+        <div acn-loader="vm.isLoading">
+            <div ng-show="vm.showContent">
+                <ul id="tabs">
+                    <li><a></a></li>
+                </ul>
+                <div id="card-content">
+                    <div id="tab1">
+                        <div><span>{{vm.skillHierarchy.TypeName}}>>{{vm.skillHierarchy.CatName}}>>{{vm.skillHierarchy.CapName}}</span></div>
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <div class="widget main card">
+                                        <span id="roleName" ht-widget-header title={{vm.title}} showprof="true" showmore="false"></span>
+                                        <div class="widget-content text-info">
+                                            <div class="ratings {{vm.data.ResSGProf.SkFinalProf}}-selected">
+                                                <span id="statements-popover-P0" class="p-icon" ng-class="{'active':['P0'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0}"></span>
+                                                <span id="statements-popover-P1" class="p-icon" ng-class="{'active':['P1'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0}"></span>
+                                                <span id="statements-popover-P2" class="p-icon" ng-class="{'active':['P2'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0}"></span>
+                                                <span id="statements-popover-P3" class="p-icon" ng-class="{'active':['P3'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0}"></span>
+                                                <span id="statements-popover-P4" class="p-icon" ng-class="{'active':['P4'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0}"></span>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a href="#">
+                                                    <span class="fa fa-list-ul" style="float:right" title="Click here to view all details" data-toggle="modal"
+                                                          data-target="#ProficiencyModal" ng-show="vm.showProficiency && vm.data.ResSGProf.SkFinalProfID>0" ng-click="vm.getPeopleMSSkillData()">
+                                                    </span>
+                                                </a>
+                                                <span ng-show="!vm.showProficiency || vm.data.ResSGProf.SkFinalProfID==0" style="float:right;">No Proficiency Available</span>
+                                            </div>
+                                            <div class="modal fade" id="ProficiencyModal" role="dialog" module-loader="vm.modalLoading" >
+                                                <div id="mymodal" class="modal-dialog acc-mymodal">
+                                                    <div class="modal-content" ng-show="vm.modalLoading == false && vm.errordata== false">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title" style="color:#65689B">Proficiency & Technical Score</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <!--<div class="col-md-6">Proficiency: {{vm.data.ResSGProf.SkFinalProf}}</div>-->
+                                                                <div class="col-md-12 acc-relative">{{vm.skillHierarchy.TypeName}}>>{{vm.skillHierarchy.CatName}}>>{{vm.skillHierarchy.CapName}}</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6 acc-relative">{{vm.data.SGroupName}}</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 acc-relative">Proficiency : {{vm.data.ResSGProf.SkFinalProf}}</div>
+                                                                <!--<div class="col-md-6 ">
+                                                                    <div class="acc-ratings">
+                                                                        <i class="acc-star p0" ng-class="{'acc-stars': ['P0','P1','P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0, 'empty': ['P0','P1','P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) < 0}"></i>
+                                                                        <i class="acc-star p1" ng-class="{'acc-stars': ['P1','P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf)>= 0, 'empty': ['P1','P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) < 0}"></i>
+                                                                        <i class="acc-star p2" ng-class="{'acc-stars': ['P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0, 'empty': ['P2','P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf)< 0}"></i>
+                                                                        <i class="acc-star p3" ng-class="{'acc-stars': ['P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0, 'empty': ['P3','P4'].indexOf(vm.data.ResSGProf.SkFinalProf) < 0}"></i>
+                                                                        <i class="acc-star p4" ng-class="{'acc-stars': ['P4'].indexOf(vm.data.ResSGProf.SkFinalProf) >= 0, 'empty': ['P4'].indexOf(vm.data.ResSGProf.SkFinalProf) < 0}"></i>
+                                                                    </div>
+                                                                </div>-->
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 acc-relative">Proficiency Description : {{vm.data.ResSGProf.SkFinalDesc}} </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6 acc-relative" ng-hide="vm.skilltotalscore=='' || vm.skilltotalscore==null ">Total Technical Score : {{vm.skilltotalscore}}</div>
+                                                            </div>
+                                                            <div class="row" ng-show="vm.SkillTotalCount>0">
+                                                                <table class="table table-bordered table-condensed table-hover acc-tbody " style="width:85%;">
+                                                                    <tr class="">
+                                                                        <th class="acc-th">Skill&nbsp;&nbsp;Name</th>
+                                                                        <th class="acc-th">Score</th>
+                                                                    </tr>
+                                                                    <tr class="active" ng-repeat="skill in vm.skillXlist">
+                                                                        <td style="width:85%"><small>{{skill.SkillName}}</small></td>
+                                                                        <td class="acc-td" style="width:15%"><small>{{skill.SkillScore}}</small></td>
+                                                                    </tr>
+                                                                </table>
+                                                                <div ng-show="skillcount==0">
+                                                                    <span>No {{Core}} Skill.</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" ng-show="vm.SkillTotalCount>0">
+                                                                <div class="acc-pageinfo">{{vm.skillPage}}  / {{vm.skillTotalPage}}</div>
+                                                            </div>
+                                                            <div class="row" ng-show="vm.SkillTotalCount>0">
+                                                                <div class="acc-pagerinfo">
+                                                                    <pagination ng-click="vm.getfirstlogin()" ng-model="vm.skillPage"
+                                                                                total-items="vm.SkillTotalCount"
+                                                                                max-size="0"
+                                                                                previous-text="<<"
+                                                                                next-text=">>"
+                                                                                boundary-links="false"
+                                                                                items-per-page="vm.itemPerPage">
+                                                                    </pagination>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-content acc-mpdal" ng-show="vm.modalLoading == false && vm.errordata== true">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title" style="color:#65689B">Proficiency & Technical Score</h4>
+                                                        </div>
+                                                        <div class="modal-body"><p class=" acc-msg ">{{vm.errormsg}}</p>
+                                                        <!--<button data-bb-handler="ok" type="button" class="btn btn-primary">OK</button>-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <collapsedcard skilltype="Core" shortfor="C" skills=vm.core.Skillhier rolename=vm.data.SGroupName currentskills=vm.currentCore currentpage=vm.corePage itemperpage=vm.itemPerPage skillcount=vm.coreSkillCount totalpage="vm.coreTotalPage"></collapsedcard>
+                                <collapsedcard skilltype="Mandatory" shortfor="M" skills=vm.mandatory.Skillhier rolename=vm.data.SGroupName currentskills=vm.currentMandatory currentpage=vm.mandatoryPage itemperpage=vm.itemPerPage skillcount=vm.mandatorySkillCount totalpage="vm.mandatoryTotalPage"></collapsedcard>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="headingrotis" style="margin-top:200px;text-align: center" ng-show="vm.showword">
+        {{vm.message}}
+         </div>
+ </div>

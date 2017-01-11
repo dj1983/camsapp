@@ -1,0 +1,56 @@
+﻿<div class="card-container">
+    <p class="headingrotis" ng-show="vm.showContent">Proficiency Process</p>
+    <div style="height:inherit;" acn-loader="vm.isLoading">
+        <div class="process-area" ng-show="vm.showContent">
+            <div class="row" style="padding:30px;">
+                <div class="col-md-10"><span style="font-family:RotisSansSerif55;font-size:20px;">Please turn on to let employee view proficiency</span></div>
+                <div class="col-md-2">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" ng-model="vm.proficiencyDisplay" ng-click="vm.updateKey(vm.proficiencyDisplay)">
+                        <label class="onoffswitch-label" for="myonoffswitch">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding:30px;">
+                <div class="col-md-10"><span style="font-family:RotisSansSerif55;font-size:20px;">Please turn on to let employee view Technical Score</span></div>
+                <div class="col-md-2">
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitchs" ng-model="vm.scoreDisplay" ng-click="vm.updateScore(vm.scoreDisplay)">
+                        <label class="onoffswitch-label" for="myonoffswitchs">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding:30px;">
+                <div class="col-md-10"><span style="font-family:RotisSansSerif55;font-size:20px;">Please click the button to start the proficiency computation</span></div>
+                <div class="col-md-2"><button class="process-button" ng-disabled="!vm.buttonEnabled" ng-click="vm.startProcess()">PROCESS</button></div>
+            </div>
+            <div class="row" style="padding:30px;" ng-show="(vm.isProcessing || vm.status!=='NotStarted') && vm.message!==undefined && vm.owner && vm.status !== 'NotStarted'">
+                <div class="row" style="width:95%;margin:auto;">
+                    <div class="pull-left"><small>{{vm.message}}</small></div>
+                    <div class="pull-right"><small>{{vm.currentcount}}/{{vm.allcount}}</small></div>
+                </div>
+                <progressbar class="progress-striped active" style="width:95%;margin:auto;" max="100" value="vm.progressvalue"><i>{{vm.progressvalue}}%</i></progressbar>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="master-container" ng-hide="vm.errordata==false">
+    <!--<h3 class="headingrotis" style=" margin-bottom: 30px;">{{vm.errormsg}}</h3>-->
+    <div id="mymodal" class="modal-dialog acc-mymodal">
+        <div class="modal-content acc-mpdal" style="width:100%" ng-show="vm.errordata == true">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:#65689B">Process</h4>
+            </div>
+            <div class="modal-body">
+                <p class="acc-msg">{{vm.errormsg}}</p>
+            </div>
+        </div>
+    </div>
+</div>

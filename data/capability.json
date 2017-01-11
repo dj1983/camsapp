@@ -1,0 +1,8 @@
+﻿[
+    { "id": 1, "capability": "Java Enterprise Edition" },
+    { "id": 2, "capability": "Microsoft Platform" },
+    { "id": 3, "capability": "SAP" },
+    { "id": 4, "capability": "Testing" }
+]
+   
+
